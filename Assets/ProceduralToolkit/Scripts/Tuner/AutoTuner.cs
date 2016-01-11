@@ -81,6 +81,7 @@ public class AutoTuner : MonoBehaviour {
 				newpop.Add(Crossover(p1, p2));
 				newpop.Add(Crossover(p1, p2));
 				newpop.Add(Crossover(p1, p2));
+				newpop.Add(Crossover(p1, p2));
 			}
 			Debug.Log("New population generated.");
 			GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = (100*g/generations)+" percent complete";
@@ -91,7 +92,7 @@ public class AutoTuner : MonoBehaviour {
 
 		//Evaluate the population according to the given targets, one last time
 		population.Sort(delegate(ParValue[] p1, ParValue[] p2) { return -(Evaluate(p1, numberOfRunsPerInstance).CompareTo(Evaluate(p2, numberOfRunsPerInstance))); });
-			
+
 		GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = "";
 
 		//Apply the parameters
@@ -192,7 +193,7 @@ public class AutoTuner : MonoBehaviour {
 		}
 		return null;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		// if(Input.GetKeyDown(KeyCode.Q)){
