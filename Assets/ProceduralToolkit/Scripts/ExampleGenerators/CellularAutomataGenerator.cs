@@ -3,13 +3,13 @@ using System.Collections;
 
 public class CellularAutomataGenerator : MonoBehaviour {
 
-	[Tunable(MinValue: 0.1f, MaxValue: 0.7f, Name:"Initial Spawn Chance")]
+	[Tunable(MinValue: 0.2f, MaxValue: 0.5f, Name:"Initial Spawn Chance")]
 	public float ChanceTileWillSpawnAlive = 0.45f;
 
-	[Tunable(MinValue: 1, MaxValue: 6, Name: "No. Of Iterations")]
+	[Tunable(MinValue: 0, MaxValue: 8, Name: "No. Of Iterations")]
 	public int NumberOfIterations = 5;
 
-	[Tunable(MinValue: 2, MaxValue: 4, Name: "Death Limit")]
+	[Tunable(MinValue: 2, MaxValue: 5, Name: "Death Limit")]
 	public int StarvationLowerLimit = 2;
 
 	[Tunable(MinValue: 2, MaxValue: 5, Name: "Birth Limit")]
@@ -140,7 +140,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 	public void UpdateInitialBirthChance(string chance){ ChanceTileWillSpawnAlive = float.Parse(chance);}
 	public void UpdateDeathLimit(string dl){ StarvationLowerLimit = int.Parse(dl);}
 	public void UpdateBirthLimit(string bl){ BirthCount = int.Parse(bl);}
-	
+
 	// Update is called once per frame
 	void Update () {
 		// if(Input.GetKeyDown(KeyCode.Space)){
@@ -185,7 +185,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 				}
 			}
 		}
-		 
+
 		 //Replace texture
 		 newTex.Apply();
 
@@ -200,7 +200,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 		int x = _x*scaleFactor; int y = _y*scaleFactor;
 		for(int i=x; i<x+scaleFactor; i++){
 			for(int j=y; j<y+scaleFactor; j++){
-				tex.SetPixel(i, j, c);		
+				tex.SetPixel(i, j, c);
 			}
 		}
 	}

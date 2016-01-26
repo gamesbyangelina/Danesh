@@ -8,7 +8,7 @@ using System.Reflection;
 public class GeneratorAnalysisUI : MonoBehaviour {
 
 	UnityEngine.UI.InputField TargetDensity;
-	UnityEngine.UI.InputField TargetOpenness; 
+	UnityEngine.UI.InputField TargetOpenness;
 	UnityEngine.UI.Button AutoTuneButton;
 
 	AutoTuner tuner;
@@ -40,7 +40,7 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 			foreach(Attribute attr in field.GetCustomAttributes(false)){
 				if(attr is TunableAttribute){
 					TunableAttribute t = (TunableAttribute) attr;
-					
+
 					TunableParameter tpi;
 					if(t.MinValue is bool){
 						GameObject tpp = Instantiate(TunableBoolUIPrefab);
@@ -52,7 +52,7 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 						tpp.transform.parent = TunableParameterPanel.transform;
 						tpi = tpp.GetComponent<TunableParameterInput>();
 					}
-					
+
 					tpi.Setup(this);
 					//Set the field's name up
 					tpi.targetParameter = field;
@@ -87,7 +87,7 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 						metricPanel.transform.parent = TargetMetricPanel.transform;
 						metricPanel.transform.Find("TargetLabel").GetComponent<Text>().text = "Calculate "+((Metric) attr).Name;
 
-						//This line creates a MetricDelegate from the MethodInfo object. 
+						//This line creates a MetricDelegate from the MethodInfo object.
 						//MetricDelegates take a Tile[,] and return a float.
 						//Note that we pass in the MonoBehaviour because it needs an object to invoke the delegate on.
 						MetricDelegateList.Add((TargetSetting.MetricDelegate)Delegate.CreateDelegate(typeof(TargetSetting.MetricDelegate), b, method));
@@ -115,7 +115,7 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 						metricPanel.transform.parent = TargetMetricPanel.transform;
 						metricPanel.transform.Find("TargetLabel").GetComponent<Text>().text = ((Metric) attr).Name;
 
-						//This line creates a MetricDelegate from the MethodInfo object. 
+						//This line creates a MetricDelegate from the MethodInfo object.
 						//MetricDelegates take a Tile[,] and return a float.
 						//Note that we pass in the MonoBehaviour because it needs an object to invoke the delegate on.
 						MetricDelegateList.Add((TargetSetting.MetricDelegate)Delegate.CreateDelegate(typeof(TargetSetting.MetricDelegate), la, method));
@@ -162,21 +162,27 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 		//Set up the target settings
 		tuner.ClearTargetSettings();
 		for(int i=0; i<MetricDelegateList.Count; i++){
-			tuner.AddTargetSetting(new TargetSetting(MetricDelegateList[i], float.Parse(MetricInputFieldList[i].text)));	
+			tuner.AddTargetSetting(new TargetSetting(MetricDelegateList[i], float.Parse(MetricInputFieldList[i].text)));
 		}
-		
+
 		//Set up the active parameters
 		tuner.ClearParameters();
-		foreach(TunableParameterInput tpi in TunableParameterInputList){
+
+		Debug.Log(TunableParameterInputList);
+
+		foreach(TunableParameter tpi in TunableParameterInputList){
+		// foreach(TunableParameterInput tpi in TunableParameterInputList){
 			if(tpi.toggle.isOn){
 				Debug.Log("Added tuning parameter: "+tpi.targetParameter.Name+". Min: "+tpi.tuneMin+", Max: "+tpi.tuneMax);
-				tuner.AddParameter(new ParSetting(tpi.targetParameter, generator, tpi.tuneMin, tpi.tuneMax));	
+				tuner.AddParameter(new ParSetting(tpi.targetParameter, generator, tpi.tuneMin, tpi.tuneMax));
 			}
 		}
 
 		tuner.OnTuningComplete += AutoTuneComplete;
-
-		tuner.TuneParameters(ATPopulationSize, ATNumberGenerations, ATRunsPerInstance);
+//
+		// tuner.TuneParameters(ATPopulationSize, ATNumberGenerations, ATRunsPerInstance);
+		// tuner.TuneParametersGridSearch(4);
+		tuner.TuneRandomly(256);
 	}
 
 	public void BoolParameterChanged(bool b){ParameterChanged();}
@@ -197,18 +203,18 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 				tpi.targetParameter.SetValue(generator, parsedValue);
 			}
 		}
-		
+
 	}
 
 	public void AutoTuneComplete(){
 		AutoTuneButton.enabled = true;
 		AutoTuneButton.GetComponentsInChildren<UnityEngine.UI.Text>()[0].text = "Auto-Tune";
 
-		foreach(TunableParameterInput tpi in TunableParameterInputList){
-			tpi.inputField.text = ""+tpi.targetParameter.GetValue(generator);
+		foreach(TunableParameter tpi in TunableParameterInputList){
+			tpi.SetValue(tpi.targetParameter.GetValue(generator));
 			// if(tpi.toggle.isOn){
 				// Debug.Log("Added tuning parameter: "+tpi.targetParameter.Name+". Min: "+tpi.tuneMin+", Max: "+tpi.tuneMax);
-				// tuner.AddParameter(new ParSetting(tpi.targetParameter, generator, tpi.tuneMin, tpi.tuneMax));	
+				// tuner.AddParameter(new ParSetting(tpi.targetParameter, generator, tpi.tuneMin, tpi.tuneMax));
 			// }
 		}
 	}
@@ -228,9 +234,9 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 
 		SetupTuningUI(DAN.Instance.GetGeneratorMB());
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 }

@@ -22,7 +22,7 @@ public class DAN : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 		tuner = GetComponent<AutoTuner>();
-		analyser = GetComponent<LevelAnalyser>();	
+		analyser = GetComponent<LevelAnalyser>();
 		mapSprite = GameObject.Find("MapSprite");
 
 		foreach(MonoBehaviour b in generator.GetComponents<MonoBehaviour>()){
@@ -44,7 +44,7 @@ public class DAN : MonoBehaviour {
 
 	public Tile[,] GenerateMap(){
 		if(generateMapMethod != null)
-			return (Tile[,]) generateMapMethod.Invoke(targetBehaviour, new object[]{});	
+			return (Tile[,]) generateMapMethod.Invoke(targetBehaviour, new object[]{});
 		else
 			return new Tile[0,0];
 	}
@@ -75,19 +75,21 @@ public class DAN : MonoBehaviour {
 				}
 			}
 		}
-		 
+
 		 //Replace texture
 		 newTex.Apply();
 
 		 ShowMapSprite();
 		 mapSprite.GetComponent<SpriteRenderer>().sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f), 10f);
+
+		 mapSprite.transform.localScale = new Vector3(50f/map.GetLength(0), 50f/map.GetLength(1), 1);
 	}
 
 	void PaintPoint(Texture2D tex, int _x, int _y, int scaleFactor, Color c){
 		int x = _x*scaleFactor; int y = _y*scaleFactor;
 		for(int i=x; i<x+scaleFactor; i++){
 			for(int j=y; j<y+scaleFactor; j++){
-				tex.SetPixel(i, j, c);		
+				tex.SetPixel(i, j, c);
 			}
 		}
 	}

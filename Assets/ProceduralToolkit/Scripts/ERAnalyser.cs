@@ -20,6 +20,7 @@ public class ERAnalyser : MonoBehaviour {
 	public void SetMetricName2(string name){secondMetricName = name;}
 
 	public int numberOfAttempts = 200;
+	public int numberOfAttemptsRandom = 2000;
 
 	int[,] collectExpressiveRangeData(int totalAttempts){
 		int[,] data = new int[100,100];
@@ -32,13 +33,13 @@ public class ERAnalyser : MonoBehaviour {
 
 		for(int att=0; att<totalAttempts; att++){
 			Tile[,] map = DAN.Instance.GenerateMap();
-			
+
 			// int m1 = (int)Mathf.Round(la.CalculateDensity(map)*100);
 			// int m2 = (int)Mathf.Round(la.CalculateOpenness(map)*100);
 
 			int m1 = (int)Mathf.Round((float)metric1.Invoke(la, new object[]{map})*100);
 			int m2 = (int)Mathf.Round((float)metric2.Invoke(la, new object[]{map})*100);
-			
+
 			data[m1,m2]++;
 		}
 
@@ -69,14 +70,14 @@ public class ERAnalyser : MonoBehaviour {
 		AutoTuner at = DAN.Instance.tuner;
 		at.Push();
 
-		for(int att=0; att<numberOfAttempts; att++){
+		for(int att=0; att<numberOfAttemptsRandom; att++){
 			at.Randomise();
 			Tile[,] map = DAN.Instance.GenerateMap();
 			int m1 = (int)Mathf.Round((float)metric1.Invoke(la, new object[]{map})*99);
 			int m2 = (int)Mathf.Round((float)metric2.Invoke(la, new object[]{map})*99);
 			// Debug.Log(m1+", "+m2);
 			data[m1,m2]++;
-			progressLabel.text = "Evaluating expressive range...\n"+(100*(float)att/(float)numberOfAttempts).ToString("F0")+" percent complete";
+			progressLabel.text = "Evaluating expressive range...\n"+(100*(float)att/(float)numberOfAttemptsRandom).ToString("F0")+" percent complete";
 			yield return 0;
 		}
 
@@ -101,7 +102,7 @@ public class ERAnalyser : MonoBehaviour {
 
 		 ShowERA();
 		 image.GetComponent<Image>().sprite = Sprite.Create(newTex, new Rect(0, 0, newTex.width, newTex.height), new Vector2(0.5f, 0.5f));
-		
+
 	}
 
 	IEnumerator DrawExpressiveRangeGraph(){
@@ -167,7 +168,7 @@ public class ERAnalyser : MonoBehaviour {
 		int x = _x*scaleFactor; int y = _y*scaleFactor;
 		for(int i=x; i<x+scaleFactor; i++){
 			for(int j=y; j<y+scaleFactor; j++){
-				tex.SetPixel(i, j, c);		
+				tex.SetPixel(i, j, c);
 			}
 		}
 	}
@@ -176,9 +177,9 @@ public class ERAnalyser : MonoBehaviour {
 	void Start () {
 		// StartCoroutine(DrawExpressiveRangeGraph());
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 }
