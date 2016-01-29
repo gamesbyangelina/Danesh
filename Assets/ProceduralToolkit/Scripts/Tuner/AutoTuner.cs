@@ -93,6 +93,146 @@ public class AutoTuner : MonoBehaviour {
 
 	}
 
+	public void TuneParametersHillClimb(float timelimit){
+		StopCoroutine("TuneHillClimbCR");
+		StartCoroutine(TuneHillClimbCR(timelimit));
+	}
+
+	float floatChange = 0.05f;
+	int intChange = 1;
+
+	IEnumerator TuneHillClimbCR(float timelimit){
+		float bestScore = 0f;
+		ParValue[] bestArray = new ParValue[settings.Count];
+
+		//Pick a random spot
+		float time = Time.realtimeSinceStartup;
+
+		ParValue[] ex = new ParValue[settings.Count];
+		for(int s=0; s<settings.Count; s++){
+			ex[s] = new ParValue(settings[s].par, GridValue(settings[s], Random.Range(0f,1f)));
+		}
+		bestScore = Evaluate(ex, 50);
+		bestArray = ex;
+
+		while(Time.realtimeSinceStartup - time < timelimit){// && bestScore < 0.93f){
+			float currentTime = Time.realtimeSinceStartup - time;
+			GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = (100*(currentTime/timelimit))+" percent complete";
+
+			//Find all of the neighbouring parameter sets
+			List<ParValue[]> nbs = CalculateNeighbours(ex);
+			float bestThisRound = bestScore;
+			ParValue[] bestArrayThisRound = new ParValue[settings.Count];
+
+			foreach(ParValue[] nb in nbs){
+				float score = Evaluate(nb, 50);
+				if(score > bestThisRound){
+					bestThisRound = score;
+					bestArrayThisRound = nb;
+				}
+			}
+			yield return 0;
+
+			if(bestThisRound > bestScore){
+				bestScore = bestThisRound;
+				bestArray = bestArrayThisRound;
+				ex = bestArrayThisRound;
+			}
+			else{
+				//Random restart
+				ex = new ParValue[settings.Count];
+				for(int s=0; s<settings.Count; s++){
+					ex[s] = new ParValue(settings[s].par, GridValue(settings[s], Random.Range(0f,1f)));
+				}
+			}
+			yield return 0;
+		}
+
+		GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = "";
+
+		//Apply the parameters
+		ParValue[] pvs = bestArray;
+		for(int i=0; i<pvs.Length; i++){
+			settings[i].par.SetValue(settings[i].owner, pvs[i].val);
+		}
+		DAN.Instance.GenerateMap();
+
+		OnTuningComplete();
+
+		// Debug.Log("Time taken: "+(Time.realtimeSinceStartup - time));
+
+		// Debug.Log("Survived!");
+		// Debug.Log(bestScore);
+	}
+
+	List<ParValue[]> CalculateNeighbours(ParValue[] current){
+		List<ParValue[]> res = new List<ParValue[]>();
+		for(int i=0; i<current.Length; i++){
+			Debug.Log(current[i]);
+			object temp = settings[i].par.GetValue(settings[i].owner);
+			if(temp is int){
+				if((int)current[i].val+intChange < (int)settings[i].maxValue){
+					ParValue[] pu = new ParValue[current.Length];
+					for(int j=0; j<current.Length; j++){
+						if(j != i)
+							pu[j] = new ParValue(current[j].field, current[j].val);
+						else{
+							pu[j] = new ParValue(current[j].field, ((int)current[j].val)+intChange);
+						}
+					}
+					res.Add(pu);
+				}
+				if((int)current[i].val-intChange > (int)settings[i].minValue){
+					ParValue[] pu = new ParValue[current.Length];
+					for(int j=0; j<current.Length; j++){
+						if(j != i)
+							pu[j] = new ParValue(current[j].field, current[j].val);
+						else{
+							pu[j] = new ParValue(current[j].field, ((int)current[j].val)-intChange);
+						}
+					}
+					res.Add(pu);
+				}
+			}
+			if(temp is float){
+				if((float)current[i].val+floatChange < (float)settings[i].maxValue){
+					ParValue[] pu = new ParValue[current.Length];
+					for(int j=0; j<current.Length; j++){
+						if(j != i)
+							pu[j] = new ParValue(current[j].field, current[j].val);
+						else{
+							pu[j] = new ParValue(current[j].field, ((float)current[j].val)+floatChange);
+						}
+					}
+					res.Add(pu);
+				}
+				if((float)current[i].val-intChange > (float)settings[i].minValue){
+					ParValue[] pu = new ParValue[current.Length];
+					for(int j=0; j<current.Length; j++){
+						if(j != i)
+							pu[j] = new ParValue(current[j].field, current[j].val);
+						else{
+							pu[j] = new ParValue(current[j].field, ((float)current[j].val)-floatChange);
+						}
+					}
+					res.Add(pu);
+				}
+			}
+			if(temp is bool){
+				ParValue[] pu = new ParValue[current.Length];
+				for(int j=0; j<current.Length; j++){
+					if(j != i)
+						pu[j] = new ParValue(current[j].field, current[j].val);
+					else{
+						pu[j] = new ParValue(current[j].field, !((bool)current[j].val));
+					}
+				}
+				res.Add(pu);
+			}
+		}
+		return res;
+	}
+
 	public void TuneParametersGridSearch(float units){
 		StartCoroutine(TuneGridCR(units));
 	}
@@ -150,12 +290,10 @@ public class AutoTuner : MonoBehaviour {
 			// }
 		}
 
-		Debug.Log(settings.Count*units);
-
-		Debug.Log("Time taken: "+(Time.realtimeSinceStartup - time));
-
-		Debug.Log("Survived!");
-		Debug.Log(bestScore);
+		// Debug.Log(settings.Count*units);
+		// Debug.Log("Time taken: "+(Time.realtimeSinceStartup - time));
+		// Debug.Log("Survived!");
+		// Debug.Log(bestScore);
 
 		GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = "";
 
@@ -226,9 +364,9 @@ public class AutoTuner : MonoBehaviour {
 			population.Sort(delegate(ParValue[] p1, ParValue[] p2) { return -(fitnessDic[p1].CompareTo(fitnessDic[p2])); });
 			// population.Sort(delegate(ParValue[] p1, ParValue[] p2) { return -(Evaluate(p1, numberOfRunsPerInstance).CompareTo(Evaluate(p2, numberOfRunsPerInstance))); });
 
-			Debug.Log("Lowest fitness: "+min);
-			Debug.Log("Average fitness: "+(avg/num));
-			Debug.Log("Highest fitness: "+max);
+			// Debug.Log("Lowest fitness: "+min);
+			// Debug.Log("Average fitness: "+(avg/num));
+			// Debug.Log("Highest fitness: "+max);
 
 			yield return 0;
 			//Take the top members and build a new population through recombination
@@ -272,9 +410,9 @@ public class AutoTuner : MonoBehaviour {
 
 		GameObject.Find("AutoTuneProgress").GetComponent<UnityEngine.UI.Text>().text = "";
 
-		Debug.Log(Time.realtimeSinceStartup+" - finish");
-		Debug.Log("Time taken: "+(Time.realtimeSinceStartup - time));
-		Debug.Log("Highest fitness: "+Evaluate(population[0], numberOfRunsPerInstance));
+		// Debug.Log(Time.realtimeSinceStartup+" - finish");
+		// Debug.Log("Time taken: "+(Time.realtimeSinceStartup - time));
+		// Debug.Log("Highest fitness: "+Evaluate(population[0], numberOfRunsPerInstance));
 
 		//Apply the parameters
 		ParValue[] pvs = population[0];

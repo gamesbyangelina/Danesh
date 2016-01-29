@@ -182,7 +182,8 @@ public class GeneratorAnalysisUI : MonoBehaviour {
 //
 		// tuner.TuneParameters(ATPopulationSize, ATNumberGenerations, ATRunsPerInstance);
 		// tuner.TuneParametersGridSearch(4);
-		tuner.TuneRandomly(256);
+		// tuner.TuneRandomly(256);
+		tuner.TuneParametersHillClimb(70f);
 	}
 
 	public void BoolParameterChanged(bool b){ParameterChanged();}
