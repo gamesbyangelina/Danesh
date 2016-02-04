@@ -159,8 +159,8 @@ public class CellularAutomataGenerator : MonoBehaviour {
 		// RenderMapWithGameObjects(map);
 		RenderMapWithSprite(map);
 
-		float densMetric = DAN.Instance.analyser.CalculateDensity(map);
-		float openMetric = DAN.Instance.analyser.CalculateOpenness(map);
+		float densMetric = LevelAnalyser.CalculateDensity(map);
+		float openMetric = LevelAnalyser.CalculateOpenness(map);
 		GameObject.Find("MetricValues").GetComponent<UnityEngine.UI.Text>().text = ""+densMetric.ToString("0.000")+"\n"+openMetric.ToString("0.000");
 	}
 
@@ -243,8 +243,8 @@ public class CellularAutomataGenerator : MonoBehaviour {
 		float dTotal = 0;
 		for(int i=0; i<amount; i++){
 			Tile[,] map = GenerateLevel();
-			dTotal += DAN.Instance.analyser.CalculateDensity(map);
-			oTotal += DAN.Instance.analyser.CalculateOpenness(map);
+			dTotal += LevelAnalyser.CalculateDensity(map);
+			oTotal += LevelAnalyser.CalculateOpenness(map);
 		}
 		float densMetric = dTotal/100f;
 		float openMetric = oTotal/100f;
