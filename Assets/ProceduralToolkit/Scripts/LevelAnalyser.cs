@@ -4,13 +4,18 @@ using System.Collections.Generic;
 
 public class LevelAnalyser : MonoBehaviour {
 
-	// [Metric("Randomness")]
+	[Metric("Randomness")]
 	public static float RandomMetric(Tile[,] map){
 		return Random.Range(0f, 1f);
 	}
 
 	[Metric("Connectedness")]
 	public static float CalculateConnectedness(Tile[,] map){
+		if(map == null){
+			Debug.Log("Failed connectedness - null map");
+			return 0f;
+		}
+
 		int totalOpenTiles = 0;
 
 		bool[,] marked = new bool[map.GetLength(0), map.GetLength(1)];
@@ -74,6 +79,11 @@ public class LevelAnalyser : MonoBehaviour {
 	*/
 	[Metric("Density")]
 	public static float CalculateDensity(Tile[,] map){
+		if(map == null){
+			Debug.Log("Failed density - null map");
+			return 0f;
+		}
+
 		int totalTiles = map.GetLength(0) * map.GetLength(1);
 		int solidTiles = 0;
 		for(int i=0; i<map.GetLength(0); i++){
@@ -91,6 +101,11 @@ public class LevelAnalyser : MonoBehaviour {
 	*/
 	[Metric("Openness")]
 	public static float CalculateOpenness(Tile[,] map){
+		if(map == null){
+			Debug.Log("Failed openness - null map");
+			return 0f;
+		}
+
 		int totalTiles = 0;//map.GetLength(0) * map.GetLength(1);
 		int openTiles = 0;
 		for(int i=0; i<map.GetLength(0); i++){

@@ -60,7 +60,7 @@ public class DAN : MonoBehaviour {
 	public void RenderMapWithSprite(Tile[,] map){
 		int sf = 6; int Width = map.GetLength(0); int Height = map.GetLength(1);
 		mapSprite.transform.position = new Vector3(20, 20, 0);
-		GameObject.Find("ExpressiveRangeGraph").GetComponent<ERAnalyser>().HideERA();
+		// GameObject.Find("ExpressiveRangeGraph").GetComponent<ERAnalyser>().HideERA();
 
  		Texture2D newTex = new Texture2D (Width*sf,Height*sf, TextureFormat.ARGB32, false);
 

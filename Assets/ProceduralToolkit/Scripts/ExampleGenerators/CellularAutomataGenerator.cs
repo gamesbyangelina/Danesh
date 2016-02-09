@@ -159,6 +159,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 		// RenderMapWithGameObjects(map);
 		RenderMapWithSprite(map);
 
+		// GameObject.Find("DAN").GetComponent<LevelAnalyser>()
 		float densMetric = LevelAnalyser.CalculateDensity(map);
 		float openMetric = LevelAnalyser.CalculateOpenness(map);
 		GameObject.Find("MetricValues").GetComponent<UnityEngine.UI.Text>().text = ""+densMetric.ToString("0.000")+"\n"+openMetric.ToString("0.000");
@@ -170,7 +171,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 	void RenderMapWithSprite(Tile[,] map){
 		int sf = 6;
 		mapSprite.transform.position = new Vector3(20, 20, 0);
-		GameObject.Find("ExpressiveRangeGraph").GetComponent<ERAnalyser>().HideERA();
+		// GameObject.Find("ExpressiveRangeGraph").GetComponent<ERAnalyser>().HideERA();
 
  		 Texture2D newTex = new Texture2D (Width*sf,Height*sf, TextureFormat.ARGB32, false);
 
