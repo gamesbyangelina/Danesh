@@ -38,7 +38,7 @@ public class ERAnalyser {
 				p.RandomiseValue();
 			}
 
-			Tile[,] map = danesh.GenerateContent();
+			object map = danesh.GenerateContent();
 			List<float> nums = new List<float>();
 			for(int i=0; i<danesh.metricList.Count; i++){
 				nums.Add((float)danesh.GetMetric(i, new object[]{map}));
@@ -55,7 +55,7 @@ public class ERAnalyser {
 		EditorUtility.DisplayProgressBar("Computing Expressive Range Histogram", "Working...", progressBar);
 		List<List<float>> res = new List<List<float>>();
 		for(int att=0; att<totalAttempts; att++){
-			Tile[,] map = danesh.GenerateContent();
+			object map = danesh.GenerateContent();
 			List<float> nums = new List<float>();
 			for(int i=0; i<danesh.metricList.Count; i++){
 				nums.Add((float)danesh.GetMetric(i, new object[]{map}));
@@ -71,7 +71,7 @@ public class ERAnalyser {
 		int[,] data = new int[100,100];
 
 		for(int att=0; att<totalAttempts; att++){
-			Tile[,] map = danesh.GenerateContent();
+			object map = danesh.GenerateContent();
 
 			int m1 = (int)Mathf.Round((float)danesh.GetMetric(danesh.x_axis_era, new object[]{map})*100);
 			int m2 = (int)Mathf.Round((float)danesh.GetMetric(danesh.y_axis_era, new object[]{map})*100);
@@ -162,7 +162,7 @@ public class ERAnalyser {
 
 		for(int att=0; att<numberOfAttemptsRandom; att++){
 			// at.Randomise();
-			Tile[,] map = danesh.GenerateContent();
+			object map = danesh.GenerateContent();
 			int m1 = (int)Mathf.Round((float)danesh.GetMetric(danesh.x_axis_era, new object[]{map})*99);
 			int m2 = (int)Mathf.Round((float)danesh.GetMetric(danesh.y_axis_era, new object[]{map})*99);
 			Debug.Log(m1+", "+m2);
@@ -217,7 +217,7 @@ public class ERAnalyser {
 		// MethodInfo metric2 = t2.GetMethod(secondMetricName);
 
 		for(int att=0; att<numberOfAttempts; att++){
-			Tile[,] map = danesh.GenerateContent();
+			object map = danesh.GenerateContent();
 			int m1 = (int)Mathf.Round((float)danesh.GetMetric(danesh.x_axis_era, new object[]{map})*99);
 			int m2 = (int)Mathf.Round((float)danesh.GetMetric(danesh.y_axis_era, new object[]{map})*99);
 			// Debug.Log(m1+", "+m2);

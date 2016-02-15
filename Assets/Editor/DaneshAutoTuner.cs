@@ -85,7 +85,7 @@ public class DaneshAutoTuner {
 
         float totalScore = 0f;
         for(int att=0; att<samples; att++){
-            Tile[,] map = dan.GenerateContent();
+            object map = dan.GenerateContent();
             float score = 0f;
             //Obtain a metric reading for every targeted metric
             for(int i=0; i<c_metrics.Count; i++){

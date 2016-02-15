@@ -28,7 +28,7 @@ public class DAN : MonoBehaviour {
 		foreach(MonoBehaviour b in generator.GetComponents<MonoBehaviour>()){
 			foreach(MethodInfo method in b.GetType().GetMethods()){
 				foreach(Attribute attr in method.GetCustomAttributes(false)){
-					if(attr is MapGenerator){
+					if(attr is Generator){
 						Debug.Log(generator.name + "." + method.Name);
 						generateMapMethod = method;
 						targetBehaviour = b;

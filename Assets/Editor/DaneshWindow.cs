@@ -77,6 +77,7 @@ public class DaneshWindow : EditorWindow{
 
     MonoBehaviour generator;
     MethodInfo generateMapMethod;
+    MethodInfo contentVisualiser;
 
     ERAnalyser eranalyser;
 
@@ -689,9 +690,9 @@ public class DaneshWindow : EditorWindow{
     bool showRERATooltip = false;
     bool showATTooltip = false;
 
-    public Tile[,] GenerateContent(){
+    public object GenerateContent(){
         if(generateMapMethod != null){
-            return (Tile[,]) generateMapMethod.Invoke(generator, new object[]{});
+            return generateMapMethod.Invoke(generator, new object[]{});
         }
         else{
             return null;
@@ -710,8 +711,8 @@ public class DaneshWindow : EditorWindow{
     public void GenerateMap(){
         if(generator != null){
             if(generateMapMethod != null){
-                Tile[,] output = GenerateContent();
-                UpdateTextureWithMap(output);
+                object output = GenerateContent();
+                UpdateDaneshWithContent(output);
                 foreach(GeneratorMetric m in metricList){
                     m.currentValue = (float) m.method.Invoke(null, new object[]{output});
                 }
@@ -722,35 +723,36 @@ public class DaneshWindow : EditorWindow{
     Color solidColor = Color.black;
     Color wallColor = Color.white;
 
-    public void UpdateTextureWithMap(Tile[,] map){
-        int sf = 10; int Width = map.GetLength(0); int Height = map.GetLength(1);
-        SetupOutputCanvas();
-
-        for(int i=0; i<Width; i++){
-            for(int j=0; j<Height; j++){
-                if(map[i,j].BLOCKS_MOVEMENT){
-                    PaintPoint(GeneratorOutput, i, j, sf, solidColor);
-                }
-                else{
-                    PaintPoint(GeneratorOutput, i, j, sf, wallColor);
-                }
-            }
-        }
-
-         //Replace texture
-         GeneratorOutput.Apply();
-         DisplayTexture(GeneratorOutput);
-         Repaint();
-    }
-
-    void PaintPoint(Texture2D tex, int _x, int _y, int scaleFactor, Color c){
-        int x = _x*scaleFactor; int y = _y*scaleFactor;
-        for(int i=x; i<x+scaleFactor; i++){
-            for(int j=y; j<y+scaleFactor; j++){
-                tex.SetPixel(i, j, c);
-            }
+    public void UpdateDaneshWithContent(object content){
+        if(contentVisualiser != null){
+            SetupOutputCanvas();
+            GeneratorOutput = (Texture2D) contentVisualiser.Invoke(generator, new object[]{content, GeneratorOutput});
+            GeneratorOutput.Apply();
+            DisplayTexture(GeneratorOutput);
+            Repaint();
         }
     }
+
+    // public void UpdateTextureWithMap(Tile[,] map){
+    //     int sf = 10; int Width = map.GetLength(0); int Height = map.GetLength(1);
+    //     SetupOutputCanvas();
+
+    //     for(int i=0; i<Width; i++){
+    //         for(int j=0; j<Height; j++){
+    //             if(map[i,j].BLOCKS_MOVEMENT){
+    //                 PaintPoint(GeneratorOutput, i, j, sf, solidColor);
+    //             }
+    //             else{
+    //                 PaintPoint(GeneratorOutput, i, j, sf, wallColor);
+    //             }
+    //         }
+    //     }
+
+    //      //Replace texture
+    //      GeneratorOutput.Apply();
+    //      DisplayTexture(GeneratorOutput);
+    //      Repaint();
+    // }
 
     [MenuItem ("Window/DANESH")]
     public static void  ShowWindow () {
@@ -819,12 +821,17 @@ public class DaneshWindow : EditorWindow{
 
         foreach(MethodInfo method in generator.GetType().GetMethods()){
             foreach(Attribute attr in method.GetCustomAttributes(false)){
-                if(attr is MapGenerator){
+                if(attr is Generator){
                     // Debug.Log(generator.name + "." + method.Name);
                     generateMapMethod = method;
                 }
+                if(attr is Visualiser){
+                    contentVisualiser = method;
+                }
             }
         }
+
+
 
         if(generateMapMethod == null){
             noGeneratorFound = true;

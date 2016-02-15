@@ -24,7 +24,7 @@ public class DrunkardWalkGenerator : MonoBehaviour {
 	[Tunable(MinValue: 1, MaxValue: 4000, Name: "Number Of Iterations")]
 	public int NumberOfIterations = 1000;
 
-	[MapGenerator]
+	[Generator]
 	public Tile[,] GenerateLevel(){
 		Tile[,] res = new Tile[Width,Height];
 
@@ -111,7 +111,7 @@ public class DrunkardWalkGenerator : MonoBehaviour {
 		}
 		else if(bias && UseLinearBias){
 			float[] chanceToSelect = new float[]{0.25f,0.25f,0.25f,0.25f};
-			
+
 			chanceToSelect[0] = 0.5f-((float)dx/(float)Width)/2f;
 			chanceToSelect[1] = 0.5f;
 
@@ -129,7 +129,7 @@ public class DrunkardWalkGenerator : MonoBehaviour {
 					}
 				}
 			}
-			while(!(dx+res[0] >= 0 && dx+res[0] < Width && dy+res[1] >= 0 && dy+res[1] < Height));			
+			while(!(dx+res[0] >= 0 && dx+res[0] < Width && dy+res[1] >= 0 && dy+res[1] < Height));
 		}
 		else{
 			res = movements[Random.Range(0,movements.Count)];
@@ -144,12 +144,12 @@ public class DrunkardWalkGenerator : MonoBehaviour {
 	List<int[]> movements = new List<int[]>();
 
 	void Start(){
-		
+
 		movements.Add(new int[]{1,0});
 		movements.Add(new int[]{-1,0});
 		movements.Add(new int[]{0,1});
 		movements.Add(new int[]{0,-1});
-		
+
 	}
-	
+
 }

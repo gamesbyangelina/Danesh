@@ -43,7 +43,7 @@ public class BoardCreator : MonoBehaviour
     private GameObject boardHolder;                           // GameObject that acts as a container for all other tiles.
 
 
-    [MapGenerator]
+    [Generator]
     public Tile[,] GenerateDungeon(){
         boardHolder = new GameObject("BoardHolder");
 

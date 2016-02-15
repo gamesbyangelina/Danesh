@@ -29,7 +29,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 
 	GameObject mapSprite;
 
-	[MapGenerator]
+	[Generator]
 	public Tile[,] GenerateLevel(){
 
 		Tile[,] map = new Tile[Width, Height];

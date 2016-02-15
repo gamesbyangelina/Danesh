@@ -3,10 +3,10 @@ using System.Collections;
 using System;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
-public class MapGenerator : PropertyAttribute {
+public class Visualiser : PropertyAttribute {
 
-	public MapGenerator(){
+    public Visualiser(){
 
-	}
+    }
 
 }
