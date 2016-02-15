@@ -23,7 +23,7 @@ public class DiamondSquareWorldGen : MonoBehaviour {
 
     public int mapsize = 257;
 
-    [Tunable(MinValue: 0f, MaxValue: 1f, Name: "Random Jiggle Factor")]
+    [Tunable(MinValue: 0f, MaxValue: 1f, Name: "Granularity/Zoom")]
     public float randChangeFactor = 0.54f;
 
     [Generator]

@@ -733,27 +733,6 @@ public class DaneshWindow : EditorWindow{
         }
     }
 
-    // public void UpdateTextureWithMap(Tile[,] map){
-    //     int sf = 10; int Width = map.GetLength(0); int Height = map.GetLength(1);
-    //     SetupOutputCanvas();
-
-    //     for(int i=0; i<Width; i++){
-    //         for(int j=0; j<Height; j++){
-    //             if(map[i,j].BLOCKS_MOVEMENT){
-    //                 PaintPoint(GeneratorOutput, i, j, sf, solidColor);
-    //             }
-    //             else{
-    //                 PaintPoint(GeneratorOutput, i, j, sf, wallColor);
-    //             }
-    //         }
-    //     }
-
-    //      //Replace texture
-    //      GeneratorOutput.Apply();
-    //      DisplayTexture(GeneratorOutput);
-    //      Repaint();
-    // }
-
     [MenuItem ("Window/DANESH")]
     public static void  ShowWindow () {
         EditorWindow.GetWindow(typeof(DaneshWindow));

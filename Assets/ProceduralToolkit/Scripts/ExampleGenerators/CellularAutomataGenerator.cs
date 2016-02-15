@@ -107,6 +107,26 @@ public class CellularAutomataGenerator : MonoBehaviour {
 		return count;
 	}
 
+	[Visualiser]
+	public Texture2D RenderMap(object _m, Texture2D tex){
+		Tile[,] map = (Tile[,]) _m;
+        int sf = 10; int Width = map.GetLength(0); int Height = map.GetLength(1);
+
+        for(int i=0; i<Width; i++){
+            for(int j=0; j<Height; j++){
+                if(map[i,j].BLOCKS_MOVEMENT){
+                    VisUtils.PaintPoint(tex, i, j, sf, Color.black);
+                }
+                else{
+                    VisUtils.PaintPoint(tex, i, j, sf, Color.white);
+                }
+            }
+        }
+
+         tex.Apply();
+         return tex;
+    }
+
 	void Awake(){
 		mapSprite = GameObject.Find("MapSprite");
 	}
