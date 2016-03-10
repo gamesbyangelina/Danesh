@@ -26,10 +26,27 @@ public class ERAnalyser {
 	public int numberOfAttempts = 200;
 	public int numberOfAttemptsRandom = 2000;
 
+	public List<List<object[,]>> eraSamples;
+
 	List<List<float>> SampleExpressiveRangeRandomly(int totalAttempts, DaneshWindow gen){
 		float progressBar = 0f;
 		EditorUtility.DisplayProgressBar("Computing Randomised Expressive Range Histogram", "Working...", progressBar);
 		List<List<float>> res = new List<List<float>>();
+
+		/*
+			Current:
+			eraSample[metric1][metric2] = object[,] of samples representing the histogram
+			Lot of data duplication here, not the most efficient way to do it
+		*/
+		eraSamples = new List<List<object[,]>>();
+		for(int i=0; i<danesh.metricList.Count; i++){
+			List<object[,]> secondmetric = new List<object[,]>();
+			for(int j=0; j<danesh.metricList.Count; j++){
+				object[,] sampleH = new object[100,100];
+				secondmetric.Add(sampleH);
+			}
+			eraSamples.Add(secondmetric);
+		}
 
 		for(int att=0; att<totalAttempts; att++){
 
@@ -41,8 +58,23 @@ public class ERAnalyser {
 			object map = danesh.GenerateContent();
 			List<float> nums = new List<float>();
 			for(int i=0; i<danesh.metricList.Count; i++){
-				nums.Add((float)danesh.GetMetric(i, new object[]{map}));
+				float score = (float)danesh.GetMetric(i, new object[]{map});
+				nums.Add(score);
 			}
+
+			//Update the samples list
+			for(int i=0; i<nums.Count; i++){
+				int index1 = (int)Mathf.Round(nums[i]*100f);
+				if(index1 < 0) index1 = 0;
+				if(index1 >99) index1 = 99;
+				for(int j=0; j<nums.Count; j++){
+					int index2 = (int)Mathf.Round(nums[j]*100f);
+					if(index2 < 0) index2 = 0;
+					if(index2 >99) index2 = 99;
+					eraSamples[i][j][index1,index2] = map;
+				}
+			}
+
 			res.Add(nums);
 			EditorUtility.DisplayProgressBar("Computing Randomised Expressive Range Histogram", "Evaluating random expressive range... "+(100*(float)att/(float)totalAttempts).ToString("F0")+" percent complete", (float)att/(float)totalAttempts);
 		}
@@ -54,13 +86,39 @@ public class ERAnalyser {
 		float progressBar = 0f;
 		EditorUtility.DisplayProgressBar("Computing Expressive Range Histogram", "Working...", progressBar);
 		List<List<float>> res = new List<List<float>>();
+
+		eraSamples = new List<List<object[,]>>();
+		for(int i=0; i<danesh.metricList.Count; i++){
+			List<object[,]> secondmetric = new List<object[,]>();
+			for(int j=0; j<danesh.metricList.Count; j++){
+				object[,] sampleH = new object[100,100];
+				secondmetric.Add(sampleH);
+			}
+			eraSamples.Add(secondmetric);
+		}
+
 		for(int att=0; att<totalAttempts; att++){
 			object map = danesh.GenerateContent();
 			List<float> nums = new List<float>();
 			for(int i=0; i<danesh.metricList.Count; i++){
-				nums.Add((float)danesh.GetMetric(i, new object[]{map}));
+				float score = (float)danesh.GetMetric(i, new object[]{map});
+				nums.Add(score);
 			}
 			res.Add(nums);
+
+			//Update the samples list
+			for(int i=0; i<nums.Count; i++){
+				int index1 = (int)Mathf.Round(nums[i]*100f);
+				if(index1 < 0) index1 = 0;
+				if(index1 >99) index1 = 99;
+				for(int j=0; j<nums.Count; j++){
+					int index2 = (int)Mathf.Round(nums[j]*100f);
+					if(index2 < 0) index2 = 0;
+					if(index2 >99) index2 = 99;
+					eraSamples[i][j][index1,index2] = map;
+				}
+			}
+
 			EditorUtility.DisplayProgressBar("Computing Expressive Range Histogram", "Evaluating expressive range... "+(100*(float)att/(float)totalAttempts).ToString("F0")+" percent complete", (float)att/(float)totalAttempts);
 		}
 		EditorUtility.ClearProgressBar();

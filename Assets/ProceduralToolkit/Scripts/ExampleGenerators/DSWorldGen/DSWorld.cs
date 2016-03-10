@@ -3,6 +3,12 @@ using System.Collections;
 
 public class DSWorld {
 
+    public int deepWaterLimit;
+    public int waterLimit;
+    public int plainsLimit;
+    public int hillsLimit;
+    public int mountainLimit;
+
     public float[,] elevation;
     public float[,] rain;
     public float[,] temperature;

@@ -1,0 +1,7 @@
+A Note On Tiles
+
+These are from the Oryx Fantasy 16-bit Tileset. These are currently in Danesh for prototyping and dev builds only - when we transition to the asset store these won't be here and they are not for general/wider use, as they shouldn't be distributed really. Just so you know! The art is really cool and you should check out Oryx's other stuff:
+
+http://oryxdesignlab.com/product-sprites/
+
+Mike

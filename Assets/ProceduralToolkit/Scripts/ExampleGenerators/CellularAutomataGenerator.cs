@@ -1,18 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CellularAutomataGenerator : MonoBehaviour {
 
-	[Tunable(MinValue: 0.2f, MaxValue: 0.5f, Name:"Initial Spawn Chance")]
+	[Tunable(MinValue: 0.2f, MaxValue: 0.5f, Name:"Initial Solid Chance")]
 	public float ChanceTileWillSpawnAlive = 0.45f;
 
 	[Tunable(MinValue: 0, MaxValue: 8, Name: "No. Of Iterations")]
 	public int NumberOfIterations = 5;
 
-	[Tunable(MinValue: 2, MaxValue: 5, Name: "Death Limit")]
+	[Tunable(MinValue: 2, MaxValue: 6, Name: "Death Limit")]
 	public int StarvationLowerLimit = 2;
 
-	[Tunable(MinValue: 2, MaxValue: 5, Name: "Birth Limit")]
+	[Tunable(MinValue: 2, MaxValue: 6, Name: "Birth Limit")]
 	public int BirthCount = 3;
 
 	public int Width = 40;
@@ -25,6 +26,7 @@ public class CellularAutomataGenerator : MonoBehaviour {
 	public GameObject FloorPiece;
 
 	[Tooltip("Setting this to false will cause the edge of the map to become rounded over time.")]
+	// [Tunable(MinValue: false, MaxValue: true, Name: "Map Edges Solid")]
 	public bool TreatMapEdgesAsSolid = true;
 
 	GameObject mapSprite;
@@ -96,7 +98,6 @@ public class CellularAutomataGenerator : MonoBehaviour {
 				if(dx < 0 || dx >= map.GetLength(0) || dy < 0 || dy >= map.GetLength(1)){
 					if(TreatMapEdgesAsSolid)
 						count++;
-					continue;
 				}
 				else{
 					if(map[dx,dy].BLOCKS_MOVEMENT)
@@ -110,21 +111,75 @@ public class CellularAutomataGenerator : MonoBehaviour {
 	[Visualiser]
 	public Texture2D RenderMap(object _m, Texture2D tex){
 		Tile[,] map = (Tile[,]) _m;
-        int sf = 10; int Width = map.GetLength(0); int Height = map.GetLength(1);
+
+		tex = new Texture2D (8 * map.GetLength(0), 8 * map.GetLength(1), TextureFormat.ARGB32, false);
+        int sf = 8; int Width = map.GetLength(0); int Height = map.GetLength(1);
+		// int sf = 10;
+        Texture2D gnd = Resources.Load<Texture2D>("tiles/tile_17");
 
         for(int i=0; i<Width; i++){
             for(int j=0; j<Height; j++){
                 if(map[i,j].BLOCKS_MOVEMENT){
-                    VisUtils.PaintPoint(tex, i, j, sf, Color.black);
+                    // VisUtils.PaintPoint(tex, i, j, sf, Color.black);
+                    VisUtils.PaintTexture(tex, i, j, sf, gnd, 8, 8);
+                    VisUtils.PaintTexture(tex, i, j, sf, selectTexture(map, i, j), 8, 8);
+
                 }
                 else{
-                    VisUtils.PaintPoint(tex, i, j, sf, Color.white);
+                	VisUtils.PaintTexture(tex, i, j, sf, gnd, 8, 8);
+                    // VisUtils.PaintPoint(tex, i, j, sf, Color.white);
+                    // VisUtils.PaintTexture(tex, i, j, sf, Resources.Load<Texture2D>("tiles/ground"), 32, 32);
+                    // VisUtils.PaintTexture(tex, i, j, sf, selectTexture(map, i, j), 8, 8);
                 }
             }
         }
 
-         tex.Apply();
-         return tex;
+        tex.Apply();
+        return tex;
+    }
+
+    Dictionary<string, string> autotiles;
+
+    Texture2D selectTexture(Tile[,] map, int x, int y){
+		if(autotiles == null){
+			autotiles = new Dictionary<string, string>();
+			autotiles.Add("0000", "01");
+			autotiles.Add("0001", "09");
+			autotiles.Add("0010", "05");
+			autotiles.Add("0011", "13");
+			autotiles.Add("0100", "03");
+			autotiles.Add("0101", "11");
+			autotiles.Add("0110", "07");
+			autotiles.Add("0111", "15");
+			autotiles.Add("1000", "02");
+			autotiles.Add("1001", "10");
+			autotiles.Add("1010", "06");
+			autotiles.Add("1011", "14");
+			autotiles.Add("1100", "04");
+			autotiles.Add("1101", "12");
+			autotiles.Add("1110", "08");
+			autotiles.Add("1111", "16");
+		}
+
+    	string name = "";
+    	if(y == map.GetLength(1)-1 || map[x,y+1].BLOCKS_MOVEMENT)
+    		name += "1";
+    	else
+    		name += "0";
+    	if(x == map.GetLength(0)-1 || map[x+1,y].BLOCKS_MOVEMENT)
+    		name += "1";
+    	else
+    		name += "0";
+    	if(y == 0 || map[x,y-1].BLOCKS_MOVEMENT)
+    		name += "1";
+    	else
+    		name += "0";
+    	if(x == 0 || map[x-1,y].BLOCKS_MOVEMENT)
+    		name += "1";
+    	else
+    		name += "0";
+
+    	return Resources.Load<Texture2D>("tiles/tile_"+autotiles[name]);
     }
 
 	void Awake(){
@@ -285,6 +340,8 @@ public class CellularAutomataGenerator : MonoBehaviour {
 
 				int dx = x+i; int dy = y+j;
 				if(dx < 0 || dx >= map.GetLength(0) || dy < 0 || dy >= map.GetLength(1)){
+					if(TreatMapEdgesAsSolid)
+						return true;
 					continue;
 				}
 				else{

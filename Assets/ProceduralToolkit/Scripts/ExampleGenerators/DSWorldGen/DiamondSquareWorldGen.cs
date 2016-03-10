@@ -21,7 +21,7 @@ public class DiamondSquareWorldGen : MonoBehaviour {
     public Color hillsColor;
     public Color snowColor;
 
-    public int mapsize = 257;
+    public int mapsize = 65;
 
     [Tunable(MinValue: 0f, MaxValue: 1f, Name: "Granularity/Zoom")]
     public float randChangeFactor = 0.54f;
@@ -31,6 +31,12 @@ public class DiamondSquareWorldGen : MonoBehaviour {
         randomSeed = Random.Range(0, 1000);
 
         DSWorld w = new DSWorld(mapsize);
+
+        w.deepWaterLimit = this.waterLimit - 40;
+        w.waterLimit = this.waterLimit;
+        w.plainsLimit = this.plainsLimit;
+        w.hillsLimit = this.hillsLimit;
+        w.mountainLimit = this.mountainLimit;
 
         // deepWaterColor = HexToColor("729E9A");
         // shallowWaterColor = HexToColor("B2CCDD");

@@ -16,6 +16,8 @@ public class GeneratorParameter {
     public FieldInfo field;
     public string type;
 
+    public bool locked = false;
+
 	public GeneratorParameter(string name, object currentValue, object minValue, object maxValue, FieldInfo field, object owner){
         this.name = name;
 
@@ -35,6 +37,9 @@ public class GeneratorParameter {
     }
 
     public void ParseAndSetValue(string s){
+        if(locked)
+            return;
+
         // if(currentValue is bool)
             //???
         if(currentValue is int){
@@ -49,7 +54,38 @@ public class GeneratorParameter {
         }
     }
 
+    public void ParseSetMinValue(string s){
+        if(currentValue is int){
+            int o;
+            if(int.TryParse(s, out o)){
+                minValue = (object)o;
+            }
+        }
+        if(currentValue is float){
+            float o;
+            if(float.TryParse(s, out o))
+                minValue = (object)o;
+        }
+    }
+
+    public void ParseSetMaxValue(string s){
+        if(currentValue is int){
+            int o;
+            if(int.TryParse(s, out o)){
+                maxValue = (object)o;
+            }
+        }
+        if(currentValue is float){
+            float o;
+            if(float.TryParse(s, out o))
+                maxValue = (object)o;
+        }
+    }
+
     public void SetValue(object o){
+        if(locked)
+            return;
+
         field.SetValue(owner, o);
         currentValue = o;
     }
@@ -74,6 +110,9 @@ public class GeneratorParameter {
     }
 
     public void RandomiseValue(){
+        if(locked)
+            return;
+
         object temp = field.GetValue(owner);
         if(temp is int){
             field.SetValue(owner, Random.Range((int)minValue, ((int)maxValue)+1));
