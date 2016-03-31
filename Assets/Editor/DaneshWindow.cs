@@ -994,7 +994,7 @@ public class DaneshWindow : EditorWindow{
             SetupOutputCanvas();
             GeneratorOutput = (Texture2D) contentVisualiser.Invoke(generator, new object[]{content, GeneratorOutput});
             // GeneratorOutput.Resize(500,500);
-            TextureScale.Point(GeneratorOutput, 800, 800);
+            TextureScale.Point(GeneratorOutput, 500, 500);
             GeneratorOutput.Apply();
             DisplayTexture(GeneratorOutput);
             Repaint();
